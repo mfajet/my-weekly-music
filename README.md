@@ -3,6 +3,7 @@ Simple script to use last.fm API to retrieve the 25 most listened to albums of m
 
 ## Installation and setup
 ```npm install```
+
 One of the dependencies depends on node canvas so it may require that you follow the installation instructions found here for its dependencies: https://github.com/Automattic/node-canvas/wiki/_pages
 
 In addition,you need to rename the ".env-sample" file to ".env" and fill it out with your own information and API keys and secrets
