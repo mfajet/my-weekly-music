@@ -36,12 +36,35 @@ fetch('http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&limit=25&page=
           imageHeight: 300, // height of each image
           spacing: 0, // optional: pixels between each image
         };
-
+        var data
         createCollage(options)
           .then((canvas) => {
             const src = canvas.jpegStream();
+            data = canvas.toBuffer();
             const dest = fs.createWriteStream("myFile.jpg");
             src.pipe(dest);
-        }).then(()=>{console.log("after");})
+        }).then(()=>{
+            twitter.post('media/upload', {media: data}, function(error, media, response) {
+                if(!error){
+                var status = {
+                  status: 'My automatically generated top 25 weekly albums!',
+                  media_ids: media.media_id_string // Pass the media id string
+                }
+                twitter.post('statuses/update', status)
+                  .then(function (tweet) {
+                    console.log(tweet);
+                  })
+                  .catch(function (error) {
+                    throw error;
+                  })
+              }else{
+                  //console.log(response);
+              }
+            })
+        }).catch(function (error) {
+          throw error;
+        })
+    }).catch(function (error) {
+      throw error;
     })
 }).catch((err)=>{console.log(err);})
