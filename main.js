@@ -1,7 +1,5 @@
 require('dotenv').config();
-var express = require('express');
 const fetch = require("node-fetch");
-var app = express();
 const createCollage = require("photo-collage");
 const fs = require('fs');
 const lastfmkey = process.env.lastfm;
@@ -44,6 +42,6 @@ fetch('http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&limit=25&page=
             const src = canvas.jpegStream();
             const dest = fs.createWriteStream("myFile.jpg");
             src.pipe(dest);
-          });
+        }).then(()=>{console.log("after");})
     })
 }).catch((err)=>{console.log(err);})
