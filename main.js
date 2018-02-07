@@ -4,6 +4,7 @@ const createCollage = require("photo-collage");
 const fs = require('fs');
 const lastfmkey = process.env.lastfm;
 const username = process.env.user;
+//last_tweet_id=process.env.last_tweet_id
 var Twitter = require('twitter');
 var twitterConfig = {
     consumer_key: process.env.twitterConsumerKey,
@@ -13,7 +14,12 @@ var twitterConfig = {
 }
 
 var twitter = new Twitter(twitterConfig);
+
+
 images =[];
+last_tweet_id = fs.readFileSync( __dirname + '/last_tweet_id.txt').toString().trim()
+
+//process.env["last_tweet_id"]=5
 fetch('http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&limit=25&page=1&period=7day&user=' + username + '&api_key=' + lastfmkey + '&format=json').then(response => {
     response.json().then(json => {
         console.log(json.topalbums.album[2]);
@@ -47,12 +53,21 @@ fetch('http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&limit=25&page=
             twitter.post('media/upload', {media: data}, function(error, media, response) {
                 if(!error){
                 var status = {
-                  status: 'My automatically generated top 25 weekly albums!',
-                  media_ids: media.media_id_string // Pass the media id string
+                  status: 'My automatically generated top 25 weekly albums! (Testing thread functionality)',
+                  media_ids: media.media_id_string, // Pass the media id string,
+                  in_reply_to_status_id: last_tweet_id
                 }
                 twitter.post('statuses/update', status)
                   .then(function (tweet) {
                     console.log(tweet);
+                    fs.writeFile(__dirname + '/last_tweet_id.txt', tweet.id_str, function (err) {
+                        if (err) {
+                            return console.log(err);
+                        }
+
+                        console.log("The tweet id was saved!");
+                    });
+
                   })
                   .catch(function (error) {
                     throw error;
