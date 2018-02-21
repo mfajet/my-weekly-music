@@ -53,7 +53,7 @@ fetch('http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&limit=25&page=
             twitter.post('media/upload', {media: data}, function(error, media, response) {
                 if(!error){
                 var status = {
-                  status: 'My automatically generated top 25 weekly albums! (Testing thread functionality)',
+                  status: 'My automatically generated top 25 weekly albums!',
                   media_ids: media.media_id_string, // Pass the media id string,
                   in_reply_to_status_id: last_tweet_id
                 }
